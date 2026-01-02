@@ -1,0 +1,17 @@
+name: Docker CI Test
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: docker build
+        run: docker build -t vite-ci-test .
+        working-directory: dockerproject
