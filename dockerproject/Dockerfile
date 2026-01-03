@@ -1,12 +1,14 @@
+# node 환경 고정
 FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm ci
+# 의존성 먼저 복사 → 빌드 캐시 활용
+COPY package*.json ./
+RUN npm install
 
+# 전체 복사
 COPY . .
 
-EXPOSE 5173
-
-CMD ["npm", "run", "dev", "--", "--host"]
+# 빌드
+RUN npm run build
