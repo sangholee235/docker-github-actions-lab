@@ -1,14 +1,20 @@
-# node 환경 고정
-FROM node:20-alpine
+# 1단계: 빌드
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# 의존성 먼저 복사 → 빌드 캐시 활용
 COPY package*.json ./
 RUN npm install
 
-# 전체 복사
 COPY . .
-
-# 빌드
 RUN npm run build
+
+
+# 2단계: 실행 (정적 파일 서빙)
+FROM nginx:alpine
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
